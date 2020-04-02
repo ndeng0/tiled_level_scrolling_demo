@@ -2039,8 +2039,8 @@ var WebGLGameSpriteRenderer = function (_WebGLGameRenderingCo) {
             // CALCULATE HOW MUCH TO TRANSLATE THE QUAD PER THE SPRITE POSITION
             var spriteWidth = spriteType.getSpriteWidth();
             var spriteHeight = spriteType.getSpriteHeight();
-            var spriteXInPixels = sprite.getPosition().getX() + spriteWidth / 2;
-            var spriteYInPixels = sprite.getPosition().getY() + spriteHeight / 2;
+            var spriteXInPixels = sprite.getPosition().getX() + spriteWidth / 2 - viewport.getX();
+            var spriteYInPixels = sprite.getPosition().getY() + spriteHeight / 2 - viewport.getY();
             var spriteXTranslate = (spriteXInPixels - canvasWidth / 2) / (canvasWidth / 2);
             var spriteYTranslate = (spriteYInPixels - canvasHeight / 2) / (canvasHeight / 2);
             this.meshTranslate.setX(spriteXTranslate);
@@ -2923,6 +2923,20 @@ var UIController = function UIController(canvasId, initScene) {
     this.mouseUpHandler = function (event) {
         _this.spriteToDrag = null;
     };
+    this.keyboardHandler = function (event) {
+        if (event.key == 'w' && _this.scene.getViewport().getY() > 0) {
+            _this.scene.getViewport().inc(0, -100);
+        }
+        if (event.key == 'a' && _this.scene.getViewport().getX() > 0) {
+            _this.scene.getViewport().inc(-100, 0);
+        }
+        if (event.key == 's') {
+            _this.scene.getViewport().inc(0, 100);
+        }
+        if (event.key == 'd') {
+            _this.scene.getViewport().inc(100, 0);
+        }
+    };
     this.spriteToDrag = null;
     this.scene = initScene;
     this.dragOffsetX = -1;
@@ -2931,6 +2945,7 @@ var UIController = function UIController(canvasId, initScene) {
     canvas.addEventListener("mousedown", this.mouseDownHandler);
     canvas.addEventListener("mousemove", this.mouseMoveHandler);
     canvas.addEventListener("mouseup", this.mouseUpHandler);
+    document.addEventListener("keydown", this.keyboardHandler);
 };
 
 exports.UIController = UIController;
