@@ -20,6 +20,7 @@ export class UIController {
         canvas.addEventListener("mousedown", this.mouseDownHandler);
         canvas.addEventListener("mousemove", this.mouseMoveHandler);
         canvas.addEventListener("mouseup", this.mouseUpHandler);
+        document.addEventListener("keydown", this.keyboardHandler);
     }
 
     public mouseDownHandler = (event : MouseEvent) : void => {
@@ -48,5 +49,20 @@ export class UIController {
 
     public mouseUpHandler = (event : MouseEvent) : void => {
         this.spriteToDrag = null;
+    }
+
+    public keyboardHandler = (event : KeyboardEvent) : void => {
+        if(event.key == 'w' && this.scene.getViewport().getY() > 0) {
+            this.scene.getViewport().inc(0, -100);
+        }
+        if(event.key == 'a' && this.scene.getViewport().getX() > 0) {
+            this.scene.getViewport().inc(-100, 0);
+        }
+        if(event.key == 's') {
+            this.scene.getViewport().inc(0, 100);
+        }
+        if(event.key == 'd') {
+            this.scene.getViewport().inc(100, 0);
+        }
     }
 }
