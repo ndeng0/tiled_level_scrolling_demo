@@ -3,13 +3,19 @@ import {AnimatedSpriteType} from './AnimatedSpriteType'
 
 export class AnimatedSprite extends SceneObject {
     private spriteType : AnimatedSpriteType;
+    private type : string;
     private state : string;
     private animationFrameIndex : number;
     private frameCounter : number;
+
+    private movetime : number = 0;
+    private randomInterval : number = Math.floor(Math.random() * 20);
+    private direction : number;
     
-    public constructor(initSpriteType : AnimatedSpriteType, initState : string) {
+    public constructor(initSpriteType : AnimatedSpriteType, initState : string, type : string) {
         super();
         this.spriteType = initSpriteType;
+        this.type = type;
         
         // START RESET
         this.state = initState;
@@ -27,6 +33,14 @@ export class AnimatedSprite extends SceneObject {
 
     public getSpriteType() : AnimatedSpriteType {
         return this.spriteType;
+    }
+
+    public getType() : string {
+        return this.type;
+    }
+
+    public getDirection() : number {
+        return this.direction;
     }
 
     public getState() : string {
@@ -51,6 +65,43 @@ export class AnimatedSprite extends SceneObject {
                 this.animationFrameIndex = 0;
             }
             this.frameCounter = 0;
+        }
+    }
+
+    public denkimushiAI() : void {
+        // DENKIMUSHI AI
+        var SPEED : number = 10;
+        this.movetime++;
+
+        if(this.movetime > this.randomInterval) {
+            this.movetime = 0;
+            this.randomInterval = Math.floor(Math.random() * 20);
+            this.direction = Math.floor(Math.random() * 5);
+        }
+
+        // Stay Still
+        if(this.direction == 0) {
+            this.setState("IDLE");
+        }
+        // Move Up
+        else if(this.direction == 1 && this.getPosition().getY() > 0) {
+            this.setState("WALK");
+            this.getPosition().set(this.getPosition().getX(), this.getPosition().getY() - SPEED, 0, 1);
+        }
+        // Move Right
+        else if(this.direction == 2 && this.getPosition().getX() + this.getSpriteType().getSpriteWidth() < 3200) {
+            this.setState("WALK");
+            this.getPosition().set(this.getPosition().getX() + SPEED, this.getPosition().getY(), 0, 1);
+        }
+        // Move Down
+        else if(this.direction == 3 && this.getPosition().getY() + this.getSpriteType().getSpriteHeight() < 3200) {
+            this.setState("WALK");
+            this.getPosition().set(this.getPosition().getX(), this.getPosition().getY() + SPEED, 0, 1);
+        }
+        // Move Left
+        else if(this.direction == 4 && this.getPosition().getX() > 0) {
+            this.setState("WALK");
+            this.getPosition().set(this.getPosition().getX() - SPEED, this.getPosition().getY(), 0, 1);
         }
     }
 
