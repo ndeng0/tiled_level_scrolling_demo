@@ -100,7 +100,10 @@ export class SceneGraph {
     public update(delta : number) : void {
         for (let sprite of this.animatedSprites) {
             sprite.update(delta);
-            sprite.getPosition().set(sprite.getPosition().getX() + 1, sprite.getPosition().getY(), 0, 1);
+            
+            if(sprite.getType() == "DENKIMUSHI2") {
+                sprite.denkimushiAI();
+            }
         }
     }
 
