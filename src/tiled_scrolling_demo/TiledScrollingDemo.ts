@@ -30,7 +30,7 @@ game.getResourceManager().loadScene(DESERT_SCENE_PATH,
     let worldHeight : number = world[0].getRows() * world[0].getTileSet().getTileHeight();
     for (let i = 0; i < 50; i++) {
         let type : AnimatedSpriteType = game.getResourceManager().getAnimatedSpriteType("DENKIMUSHI2");
-        let randomSprite : AnimatedSprite = new AnimatedSprite(type, "WALK");
+        let randomSprite : AnimatedSprite = new AnimatedSprite(type, "WALK", "DENKIMUSHI2");
         let randomX : number = Math.random() * worldWidth;
         let randomY : number = Math.random() * worldHeight;
         randomSprite.getPosition().set(randomX, randomY, 0, 1);
@@ -38,7 +38,7 @@ game.getResourceManager().loadScene(DESERT_SCENE_PATH,
     }
     for (let i = 0; i < 50; i++) {
         let type : AnimatedSpriteType = game.getResourceManager().getAnimatedSpriteType("LADYBUG");
-        let randomSprite : AnimatedSprite = new AnimatedSprite(type, "WALKING");
+        let randomSprite : AnimatedSprite = new AnimatedSprite(type, "WALKING", "LADYBUG");
         let randomX : number = Math.random() * worldWidth;
         let randomY : number = Math.random() * worldHeight;
         randomSprite.getPosition().set(randomX, randomY, 0, 1);
