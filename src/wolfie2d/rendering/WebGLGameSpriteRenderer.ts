@@ -7,16 +7,19 @@ import {Viewport} from '../scene/Viewport'
 
 export class WebGLGameSpriteRenderer extends WebGLGameRenderingComponent {
 
+    private rotation : Array<number> = [0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0];
+    private spriteRotation : number; 
+
     public constructor() {
         super();
     }
 
     public getVertexData() : Float32Array {
         return new Float32Array([
-            -0.5,  0.5, 0.0, 0.0,
-            -0.5, -0.5, 0.0, 1.0,
-             0.5,  0.5, 1.0, 0.0,
-             0.5, -0.5, 1.0, 1.0
+            -0.5,  0.5, this.rotation[0], this.rotation[1],
+            -0.5, -0.5, this.rotation[2], this.rotation[3],
+             0.5,  0.5, this.rotation[4], this.rotation[5],
+             0.5, -0.5, this.rotation[6], this.rotation[7]
         ]);
     }
     public getShaderAttributeNames() : string[] {
@@ -48,6 +51,20 @@ export class WebGLGameSpriteRenderer extends WebGLGameRenderingComponent {
         let canvasHeight : number = webGL.canvas.height;
         let spriteType : AnimatedSpriteType = sprite.getSpriteType();
         let texture : WebGLGameTexture = spriteType.getSpriteSheetTexture();
+
+        // Rotation
+        this.spriteRotation = sprite.getDirection();
+        if(this.spriteRotation == 1) {
+            this.rotation = [0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0];
+        } else if(this.spriteRotation == 2) {
+            this.rotation = [0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0];
+        } else if(this.spriteRotation == 3) {
+            this.rotation = [0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0];
+        } else if(this.spriteRotation == 4) {
+            this.rotation = [1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0];
+        } else {
+            this.rotation = [0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0];
+        }
 
         // CALCULATE HOW MUCH TO TRANSLATE THE QUAD PER THE SPRITE POSITION
         let spriteWidth : number = spriteType.getSpriteWidth();
