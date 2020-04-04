@@ -25,7 +25,7 @@ game.getResourceManager().loadScene(DESERT_SCENE_PATH, game.getSceneGraph(), gam
     var worldHeight = world[0].getRows() * world[0].getTileSet().getTileHeight();
     for (var i = 0; i < 50; i++) {
         var type = game.getResourceManager().getAnimatedSpriteType("DENKIMUSHI2");
-        var randomSprite = new AnimatedSprite_1.AnimatedSprite(type, "WALK");
+        var randomSprite = new AnimatedSprite_1.AnimatedSprite(type, "WALK", "DENKIMUSHI2");
         var randomX = Math.random() * worldWidth;
         var randomY = Math.random() * worldHeight;
         randomSprite.getPosition().set(randomX, randomY, 0, 1);
@@ -33,7 +33,7 @@ game.getResourceManager().loadScene(DESERT_SCENE_PATH, game.getSceneGraph(), gam
     }
     for (var _i = 0; _i < 50; _i++) {
         var _type = game.getResourceManager().getAnimatedSpriteType("LADYBUG");
-        var _randomSprite = new AnimatedSprite_1.AnimatedSprite(_type, "WALKING");
+        var _randomSprite = new AnimatedSprite_1.AnimatedSprite(_type, "WALKING", "LADYBUG");
         var _randomX = Math.random() * worldWidth;
         var _randomY = Math.random() * worldHeight;
         _randomSprite.getPosition().set(_randomX, _randomY, 0, 1);
@@ -1986,13 +1986,16 @@ var WebGLGameSpriteRenderer = function (_WebGLGameRenderingCo) {
     function WebGLGameSpriteRenderer() {
         _classCallCheck(this, WebGLGameSpriteRenderer);
 
-        return _possibleConstructorReturn(this, (WebGLGameSpriteRenderer.__proto__ || Object.getPrototypeOf(WebGLGameSpriteRenderer)).call(this));
+        var _this = _possibleConstructorReturn(this, (WebGLGameSpriteRenderer.__proto__ || Object.getPrototypeOf(WebGLGameSpriteRenderer)).call(this));
+
+        _this.rotation = [0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0];
+        return _this;
     }
 
     _createClass(WebGLGameSpriteRenderer, [{
         key: "getVertexData",
         value: function getVertexData() {
-            return new Float32Array([-0.5, 0.5, 0.0, 0.0, -0.5, -0.5, 0.0, 1.0, 0.5, 0.5, 1.0, 0.0, 0.5, -0.5, 1.0, 1.0]);
+            return new Float32Array([-0.5, 0.5, this.rotation[0], this.rotation[1], -0.5, -0.5, this.rotation[2], this.rotation[3], 0.5, 0.5, this.rotation[4], this.rotation[5], 0.5, -0.5, this.rotation[6], this.rotation[7]]);
         }
     }, {
         key: "getShaderAttributeNames",
@@ -2044,6 +2047,19 @@ var WebGLGameSpriteRenderer = function (_WebGLGameRenderingCo) {
             var canvasHeight = webGL.canvas.height;
             var spriteType = sprite.getSpriteType();
             var texture = spriteType.getSpriteSheetTexture();
+            // Rotation
+            this.spriteRotation = sprite.getDirection();
+            if (this.spriteRotation == 1) {
+                this.rotation = [0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0];
+            } else if (this.spriteRotation == 2) {
+                this.rotation = [0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0];
+            } else if (this.spriteRotation == 3) {
+                this.rotation = [0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0];
+            } else if (this.spriteRotation == 4) {
+                this.rotation = [1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0];
+            } else {
+                this.rotation = [0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0];
+            }
             // CALCULATE HOW MUCH TO TRANSLATE THE QUAD PER THE SPRITE POSITION
             var spriteWidth = spriteType.getSpriteWidth();
             var spriteHeight = spriteType.getSpriteHeight();
@@ -2343,7 +2359,9 @@ var SceneGraph = function () {
                     var sprite = _step2.value;
 
                     sprite.update(delta);
-                    sprite.getPosition().set(sprite.getPosition().getX() + 1, sprite.getPosition().getY(), 0, 1);
+                    if (sprite.getType() == "DENKIMUSHI2") {
+                        sprite.denkimushiAI();
+                    }
                 }
             } catch (err) {
                 _didIteratorError2 = true;
@@ -2528,12 +2546,15 @@ var SceneObject_1 = require("../SceneObject");
 var AnimatedSprite = function (_SceneObject_1$SceneO) {
     _inherits(AnimatedSprite, _SceneObject_1$SceneO);
 
-    function AnimatedSprite(initSpriteType, initState) {
+    function AnimatedSprite(initSpriteType, initState, type) {
         _classCallCheck(this, AnimatedSprite);
 
         var _this = _possibleConstructorReturn(this, (AnimatedSprite.__proto__ || Object.getPrototypeOf(AnimatedSprite)).call(this));
 
+        _this.movetime = 0;
+        _this.randomInterval = Math.floor(Math.random() * 20);
         _this.spriteType = initSpriteType;
+        _this.type = type;
         // START RESET
         _this.state = initState;
         _this.animationFrameIndex = 0;
@@ -2555,6 +2576,16 @@ var AnimatedSprite = function (_SceneObject_1$SceneO) {
         key: "getSpriteType",
         value: function getSpriteType() {
             return this.spriteType;
+        }
+    }, {
+        key: "getType",
+        value: function getType() {
+            return this.type;
+        }
+    }, {
+        key: "getDirection",
+        value: function getDirection() {
+            return this.direction;
         }
     }, {
         key: "getState",
@@ -2582,6 +2613,42 @@ var AnimatedSprite = function (_SceneObject_1$SceneO) {
                 }
                 this.frameCounter = 0;
             }
+        }
+    }, {
+        key: "denkimushiAI",
+        value: function denkimushiAI() {
+            // DENKIMUSHI AI
+            var SPEED = 10;
+            this.movetime++;
+            if (this.movetime > this.randomInterval) {
+                this.movetime = 0;
+                this.randomInterval = Math.floor(Math.random() * 20);
+                this.direction = Math.floor(Math.random() * 5);
+            }
+            // Stay Still
+            if (this.direction == 0) {
+                this.setState("IDLE");
+            }
+            // Move Up
+            else if (this.direction == 1 && this.getPosition().getY() > 0) {
+                    this.setState("WALK");
+                    this.getPosition().set(this.getPosition().getX(), this.getPosition().getY() - SPEED, 0, 1);
+                }
+                // Move Right
+                else if (this.direction == 2 && this.getPosition().getX() + this.getSpriteType().getSpriteWidth() < 3200) {
+                        this.setState("WALK");
+                        this.getPosition().set(this.getPosition().getX() + SPEED, this.getPosition().getY(), 0, 1);
+                    }
+                    // Move Down
+                    else if (this.direction == 3 && this.getPosition().getY() + this.getSpriteType().getSpriteHeight() < 3200) {
+                            this.setState("WALK");
+                            this.getPosition().set(this.getPosition().getX(), this.getPosition().getY() + SPEED, 0, 1);
+                        }
+                        // Move Left
+                        else if (this.direction == 4 && this.getPosition().getX() > 0) {
+                                this.setState("WALK");
+                                this.getPosition().set(this.getPosition().getX() - SPEED, this.getPosition().getY(), 0, 1);
+                            }
         }
     }, {
         key: "contains",
