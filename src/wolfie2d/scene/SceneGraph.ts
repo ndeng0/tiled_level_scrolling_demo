@@ -103,6 +103,8 @@ export class SceneGraph {
             
             if(sprite.getType() == "DENKIMUSHI2") {
                 sprite.denkimushiAI();
+            }else if(sprite.getType() == "LADYBUG") {
+                sprite.ladybugAI();
             }
         }
     }
