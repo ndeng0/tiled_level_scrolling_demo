@@ -1,5 +1,6 @@
 import {SceneObject} from '../SceneObject'
 import {AnimatedSpriteType} from './AnimatedSpriteType'
+import { Vector3 } from '../../math/Vector3';
 
 export class AnimatedSprite extends SceneObject {
     private spriteType : AnimatedSpriteType;
@@ -9,8 +10,10 @@ export class AnimatedSprite extends SceneObject {
     private frameCounter : number;
 
     private movetime : number = 0;
-    private randomInterval : number = Math.floor(Math.random() * 20);
+    private randomInterval : number = Math.floor(Math.random() * 60);
     private direction : number;
+    private initPosition : number;
+    private newPosition : number;
     
     public constructor(initSpriteType : AnimatedSpriteType, initState : string, type : string) {
         super();
@@ -69,8 +72,7 @@ export class AnimatedSprite extends SceneObject {
     }
 
     public denkimushiAI() : void {
-        // DENKIMUSHI AI
-        var SPEED : number = 10;
+        let SPEED : number = 10;
         this.movetime++;
 
         if(this.movetime > this.randomInterval) {
@@ -103,6 +105,36 @@ export class AnimatedSprite extends SceneObject {
             this.setState("WALK");
             this.getPosition().set(this.getPosition().getX() - SPEED, this.getPosition().getY(), 0, 1);
         }
+    }
+
+    public ladybugAI() : void {
+        let SPEED : number = 10;
+        this.movetime++;
+
+        if(this.direction == null) {
+            this.direction = Math.random() <= 0.5 ? -1 : 1;
+        }
+
+        if(this.movetime > this.randomInterval) {
+            this.movetime = 0;
+            this.direction = this.direction * -1;
+        }
+
+        // Stay Still
+        if(this.direction == 0) {
+            this.setState("IDLE");
+        }
+        // Move Right
+        else if(this.direction == 1 && this.getPosition().getX() + this.getSpriteType().getSpriteWidth() < 3200) {
+            this.setState("WALKING");
+            this.getPosition().set(this.getPosition().getX() + SPEED, this.getPosition().getY(), 0, 1);
+        }
+        // Move Left
+        else if(this.direction == -1 && this.getPosition().getX() > 0) {
+            this.setState("WALKING");
+            this.getPosition().set(this.getPosition().getX() - SPEED, this.getPosition().getY(), 0, 1);
+        }
+
     }
 
     public contains(pointX : number, pointY : number) : boolean {
