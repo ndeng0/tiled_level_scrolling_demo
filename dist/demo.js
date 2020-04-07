@@ -2361,6 +2361,8 @@ var SceneGraph = function () {
                     sprite.update(delta);
                     if (sprite.getType() == "DENKIMUSHI2") {
                         sprite.denkimushiAI();
+                    } else if (sprite.getType() == "LADYBUG") {
+                        sprite.ladybugAI();
                     }
                 }
             } catch (err) {
@@ -2552,7 +2554,7 @@ var AnimatedSprite = function (_SceneObject_1$SceneO) {
         var _this = _possibleConstructorReturn(this, (AnimatedSprite.__proto__ || Object.getPrototypeOf(AnimatedSprite)).call(this));
 
         _this.movetime = 0;
-        _this.randomInterval = Math.floor(Math.random() * 20);
+        _this.randomInterval = Math.floor(Math.random() * 60);
         _this.spriteType = initSpriteType;
         _this.type = type;
         // START RESET
@@ -2617,7 +2619,6 @@ var AnimatedSprite = function (_SceneObject_1$SceneO) {
     }, {
         key: "denkimushiAI",
         value: function denkimushiAI() {
-            // DENKIMUSHI AI
             var SPEED = 10;
             this.movetime++;
             if (this.movetime > this.randomInterval) {
@@ -2649,6 +2650,33 @@ var AnimatedSprite = function (_SceneObject_1$SceneO) {
                                 this.setState("WALK");
                                 this.getPosition().set(this.getPosition().getX() - SPEED, this.getPosition().getY(), 0, 1);
                             }
+        }
+    }, {
+        key: "ladybugAI",
+        value: function ladybugAI() {
+            var SPEED = 10;
+            this.movetime++;
+            if (this.direction == null) {
+                this.direction = Math.random() <= 0.5 ? -1 : 1;
+            }
+            if (this.movetime > this.randomInterval) {
+                this.movetime = 0;
+                this.direction = this.direction * -1;
+            }
+            // Stay Still
+            if (this.direction == 0) {
+                this.setState("IDLE");
+            }
+            // Move Right
+            else if (this.direction == 1 && this.getPosition().getX() + this.getSpriteType().getSpriteWidth() < 3200) {
+                    this.setState("WALKING");
+                    this.getPosition().set(this.getPosition().getX() + SPEED, this.getPosition().getY(), 0, 1);
+                }
+                // Move Left
+                else if (this.direction == -1 && this.getPosition().getX() > 0) {
+                        this.setState("WALKING");
+                        this.getPosition().set(this.getPosition().getX() - SPEED, this.getPosition().getY(), 0, 1);
+                    }
         }
     }, {
         key: "contains",
