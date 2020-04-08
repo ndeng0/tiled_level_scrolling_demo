@@ -24,21 +24,25 @@ game.getResourceManager().loadScene(DESERT_SCENE_PATH, game.getSceneGraph(), gam
     var worldWidth = world[0].getColumns() * world[0].getTileSet().getTileWidth();
     var worldHeight = world[0].getRows() * world[0].getTileSet().getTileHeight();
     for (var i = 0; i < 50; i++) {
-        var type = game.getResourceManager().getAnimatedSpriteType("DENKIMUSHI2");
-        var randomSprite = new AnimatedSprite_1.AnimatedSprite(type, "WALK", "DENKIMUSHI2");
+        var _type = game.getResourceManager().getAnimatedSpriteType("DENKIMUSHI2");
+        var randomSprite = new AnimatedSprite_1.AnimatedSprite(_type, "WALK", "DENKIMUSHI2");
         var randomX = Math.random() * worldWidth;
         var randomY = Math.random() * worldHeight;
         randomSprite.getPosition().set(randomX, randomY, 0, 1);
         game.getSceneGraph().addAnimatedSprite(randomSprite);
     }
     for (var _i = 0; _i < 50; _i++) {
-        var _type = game.getResourceManager().getAnimatedSpriteType("LADYBUG");
-        var _randomSprite = new AnimatedSprite_1.AnimatedSprite(_type, "WALKING", "LADYBUG");
+        var _type2 = game.getResourceManager().getAnimatedSpriteType("LADYBUG");
+        var _randomSprite = new AnimatedSprite_1.AnimatedSprite(_type2, "WALKING", "LADYBUG");
         var _randomX = Math.random() * worldWidth;
         var _randomY = Math.random() * worldHeight;
         _randomSprite.getPosition().set(_randomX, _randomY, 0, 1);
         game.getSceneGraph().addAnimatedSprite(_randomSprite);
     }
+    var type = game.getResourceManager().getAnimatedSpriteType("ANT");
+    var player = new AnimatedSprite_1.AnimatedSprite(type, "IDLE", "ANT");
+    player.getPosition().set(100, 100, 0, 1);
+    game.getSceneGraph().addAnimatedSprite(player);
     // NOW ADD TEXT RENDERING. WE ARE GOING TO RENDER 3 THINGS:
     // NUMBER OF SPRITES IN THE SCENE
     // LOCATION IN GAME WORLD OF VIEWPORT
@@ -2363,6 +2367,9 @@ var SceneGraph = function () {
                         sprite.denkimushiAI();
                     } else if (sprite.getType() == "LADYBUG") {
                         sprite.ladybugAI();
+                    } else if (sprite.getType() == "ANT") {
+                        sprite.antAI(this.viewport);
+                        console.log(sprite.getPosition().getX());
                     }
                 }
             } catch (err) {
@@ -2654,12 +2661,12 @@ var AnimatedSprite = function (_SceneObject_1$SceneO) {
     }, {
         key: "ladybugAI",
         value: function ladybugAI() {
-            var SPEED = 10;
+            var SPEED = 1;
             this.movetime++;
             if (this.direction == null) {
                 this.direction = Math.random() <= 0.5 ? -1 : 1;
             }
-            if (this.movetime > this.randomInterval) {
+            if (this.movetime > this.randomInterval + 100) {
                 this.movetime = 0;
                 this.direction = this.direction * -1;
             }
@@ -2677,6 +2684,25 @@ var AnimatedSprite = function (_SceneObject_1$SceneO) {
                         this.setState("WALKING");
                         this.getPosition().set(this.getPosition().getX() - SPEED, this.getPosition().getY(), 0, 1);
                     }
+        }
+    }, {
+        key: "antAI",
+        value: function antAI(viewport) {
+            var player = this;
+            document.addEventListener("mousemove", function (event) {
+                var mouseX = event.clientX;
+                var mouseY = event.clientY;
+                if (player.getPosition().getX() - viewport.getX() < mouseX) {
+                    player.getPosition().set(player.getPosition().getX() + 1, player.getPosition().getY(), 0, 1);
+                } else if (player.getPosition().getX() - viewport.getX() > mouseX) {
+                    player.getPosition().set(player.getPosition().getX() - 1, player.getPosition().getY(), 0, 1);
+                }
+                if (player.getPosition().getY() - viewport.getY() < mouseY) {
+                    player.getPosition().set(player.getPosition().getX(), player.getPosition().getY() + 1, 0, 1);
+                } else if (player.getPosition().getY() - viewport.getY() > mouseY) {
+                    player.getPosition().set(player.getPosition().getX(), player.getPosition().getY() - 1, 0, 1);
+                }
+            });
         }
     }, {
         key: "contains",
@@ -3034,10 +3060,10 @@ var UIController = function UIController(canvasId, initScene) {
         if (event.key == 'a' && _this.scene.getViewport().getX() > 0) {
             _this.scene.getViewport().inc(-100, 0);
         }
-        if (event.key == 's') {
+        if (event.key == 's' && _this.scene.getViewport().getY() + _this.scene.getViewport().getHeight() < 3200) {
             _this.scene.getViewport().inc(0, 100);
         }
-        if (event.key == 'd') {
+        if (event.key == 'd' && _this.scene.getViewport().getX() + _this.scene.getViewport().getWidth() < 3200) {
             _this.scene.getViewport().inc(100, 0);
         }
     };
