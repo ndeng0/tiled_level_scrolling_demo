@@ -1,8 +1,8 @@
 import {SceneGraph} from '../scene/SceneGraph'
 
 class GamePhysics {
-    constructor() {
-
+    constructor(initScene : SceneGraph) {
+        
     }
 
     update(sceneGraph : SceneGraph) : void {
