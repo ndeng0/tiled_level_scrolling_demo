@@ -2369,7 +2369,6 @@ var SceneGraph = function () {
                         sprite.ladybugAI();
                     } else if (sprite.getType() == "ANT") {
                         sprite.antAI(this.viewport);
-                        console.log(sprite.getPosition().getX());
                     }
                 }
             } catch (err) {
