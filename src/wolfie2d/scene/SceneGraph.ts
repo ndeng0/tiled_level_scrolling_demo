@@ -107,7 +107,6 @@ export class SceneGraph {
                 sprite.ladybugAI();
             }else if(sprite.getType() == "ANT") {
                 sprite.antAI(this.viewport);
-                console.log(sprite.getPosition().getX());
             }
         }
     }
