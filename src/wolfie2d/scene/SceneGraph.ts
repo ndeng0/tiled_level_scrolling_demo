@@ -105,6 +105,9 @@ export class SceneGraph {
                 sprite.denkimushiAI();
             }else if(sprite.getType() == "LADYBUG") {
                 sprite.ladybugAI();
+            }else if(sprite.getType() == "ANT") {
+                sprite.antAI(this.viewport);
+                console.log(sprite.getPosition().getX());
             }
         }
     }
