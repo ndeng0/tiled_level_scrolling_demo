@@ -58,10 +58,10 @@ export class UIController {
         if(event.key == 'a' && this.scene.getViewport().getX() > 0) {
             this.scene.getViewport().inc(-100, 0);
         }
-        if(event.key == 's') {
+        if(event.key == 's' && (this.scene.getViewport().getY() + this.scene.getViewport().getHeight()) < 3200) {
             this.scene.getViewport().inc(0, 100);
         }
-        if(event.key == 'd') {
+        if(event.key == 'd' && (this.scene.getViewport().getX() + this.scene.getViewport().getWidth()) < 3200) {
             this.scene.getViewport().inc(100, 0);
         }
     }
