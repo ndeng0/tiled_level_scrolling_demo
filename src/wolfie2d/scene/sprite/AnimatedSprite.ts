@@ -1,6 +1,7 @@
 import {SceneObject} from '../SceneObject'
 import {AnimatedSpriteType} from './AnimatedSpriteType'
 import { Vector3 } from '../../math/Vector3';
+import { Viewport } from '../Viewport';
 
 export class AnimatedSprite extends SceneObject {
     private spriteType : AnimatedSpriteType;
@@ -108,14 +109,14 @@ export class AnimatedSprite extends SceneObject {
     }
 
     public ladybugAI() : void {
-        let SPEED : number = 10;
+        let SPEED : number = 1;
         this.movetime++;
 
         if(this.direction == null) {
             this.direction = Math.random() <= 0.5 ? -1 : 1;
         }
 
-        if(this.movetime > this.randomInterval) {
+        if(this.movetime > this.randomInterval + 100) {
             this.movetime = 0;
             this.direction = this.direction * -1;
         }
@@ -135,6 +136,27 @@ export class AnimatedSprite extends SceneObject {
             this.getPosition().set(this.getPosition().getX() - SPEED, this.getPosition().getY(), 0, 1);
         }
 
+    }
+
+    public antAI(viewport : Viewport) : void {
+        let player = this;
+        
+        document.addEventListener("mousemove", function(event : MouseEvent) : void {
+            let mouseX : number = event.clientX;
+            let mouseY : number = event.clientY;
+            
+            if(player.getPosition().getX() - viewport.getX() < mouseX) {
+                player.getPosition().set(player.getPosition().getX() + 1, player.getPosition().getY(), 0, 1);
+            }else if(player.getPosition().getX() - viewport.getX() > mouseX) {
+                player.getPosition().set(player.getPosition().getX() - 1, player.getPosition().getY(), 0, 1);
+            }
+            if(player.getPosition().getY() - viewport.getY() < mouseY) {
+                player.getPosition().set(player.getPosition().getX(), player.getPosition().getY() + 1, 0, 1);
+            }else if(player.getPosition().getY() - viewport.getY() > mouseY) {
+                player.getPosition().set(player.getPosition().getX(), player.getPosition().getY() - 1, 0, 1);
+            }
+            
+        });
     }
 
     public contains(pointX : number, pointY : number) : boolean {
