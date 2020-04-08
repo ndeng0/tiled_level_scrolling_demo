@@ -45,6 +45,11 @@ game.getResourceManager().loadScene(DESERT_SCENE_PATH,
         game.getSceneGraph().addAnimatedSprite(randomSprite);
     }
 
+    let type : AnimatedSpriteType = game.getResourceManager().getAnimatedSpriteType("ANT");
+    let player : AnimatedSprite = new AnimatedSprite(type, "IDLE", "ANT");
+    player.getPosition().set(100, 100, 0, 1);
+    game.getSceneGraph().addAnimatedSprite(player);
+
     // NOW ADD TEXT RENDERING. WE ARE GOING TO RENDER 3 THINGS:
         // NUMBER OF SPRITES IN THE SCENE
         // LOCATION IN GAME WORLD OF VIEWPORT
