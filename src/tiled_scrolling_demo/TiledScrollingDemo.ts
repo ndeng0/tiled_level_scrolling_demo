@@ -71,11 +71,17 @@ game.getResourceManager().loadScene(DESERT_SCENE_PATH,
     let worldDimensionsText : TextToRender = new TextToRender("World Dimensions", "", 20, 110, function() {
         worldDimensionsText.text = "World Dimensions (w, h): (" + worldWidth + ", " + worldHeight + ")";
     });
+    let win : TextToRender = new TextToRender("YOU WIN!", "", innerWidth/2, innerHeight/2, function () {
+        if(sceneGraph.win()) win.text = "YOU WIN!";
+    });
+
     let textRenderer = game.getRenderingSystem().getTextRenderer();
     textRenderer.addTextToRender(spritesInSceneText);
     textRenderer.addTextToRender(viewportText);
     textRenderer.addTextToRender(spritesInViewportText);
     textRenderer.addTextToRender(worldDimensionsText);
+    textRenderer.addTextToRender(win);
+ 
 
     // AND START THE GAME LOOP
     game.start();
