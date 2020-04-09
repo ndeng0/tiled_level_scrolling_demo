@@ -107,16 +107,27 @@ export class SceneGraph {
      */
     public update(delta : number) : void {
         for (let sprite of this.animatedSprites) {
-            sprite.update(delta);
             
             if(sprite.getType() == "DENKIMUSHI2") {
+                sprite.update(delta);
                 sprite.denkimushiAI();
             }else if(sprite.getType() == "LADYBUG") {
+                sprite.update(delta);
                 sprite.ladybugAI();
             }else if(sprite.getType() == "ANT") {
+                sprite.update(delta);
                 sprite.antAI(this.viewport);
             }
         }
+    }
+
+    public win() : boolean {
+        for (let sprite of this.animatedSprites) {
+            if (sprite.getType() == "DENKIMUSHI2") {
+                return false;
+            }
+        }
+        return true;
     }
 
     public scope() : Array<SceneObject> {
