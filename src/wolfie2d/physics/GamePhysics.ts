@@ -38,7 +38,7 @@ export class GamePhysics {
                     arr[index].contains(left, bottom) ||
                     arr[index].contains(right, bottom)) {
                         sceneGraph.removeAnimatedSprite(index);
-                    }
+                }
             }
         }
     }
