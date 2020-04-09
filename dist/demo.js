@@ -61,11 +61,15 @@ game.getResourceManager().loadScene(DESERT_SCENE_PATH, game.getSceneGraph(), gam
     var worldDimensionsText = new TextRenderer_1.TextToRender("World Dimensions", "", 20, 110, function () {
         worldDimensionsText.text = "World Dimensions (w, h): (" + worldWidth + ", " + worldHeight + ")";
     });
+    var win = new TextRenderer_1.TextToRender("YOU WIN!", "", innerWidth / 2, innerHeight / 2, function () {
+        if (sceneGraph.win()) win.text = "YOU WIN!";
+    });
     var textRenderer = game.getRenderingSystem().getTextRenderer();
     textRenderer.addTextToRender(spritesInSceneText);
     textRenderer.addTextToRender(viewportText);
     textRenderer.addTextToRender(spritesInViewportText);
     textRenderer.addTextToRender(worldDimensionsText);
+    textRenderer.addTextToRender(win);
     // AND START THE GAME LOOP
     game.start();
 });
@@ -2445,12 +2449,14 @@ var SceneGraph = function () {
                 for (var _iterator2 = this.animatedSprites[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                     var sprite = _step2.value;
 
-                    sprite.update(delta);
                     if (sprite.getType() == "DENKIMUSHI2") {
+                        sprite.update(delta);
                         sprite.denkimushiAI();
                     } else if (sprite.getType() == "LADYBUG") {
+                        sprite.update(delta);
                         sprite.ladybugAI();
                     } else if (sprite.getType() == "ANT") {
+                        sprite.update(delta);
                         sprite.antAI(this.viewport);
                     }
                 }
@@ -2470,11 +2476,8 @@ var SceneGraph = function () {
             }
         }
     }, {
-        key: "scope",
-        value: function scope() {
-            // CLEAR OUT THE OLD
-            this.visibleSet = [];
-            // PUT ALL THE SCENE OBJECTS INTO THE VISIBLE SET
+        key: "win",
+        value: function win() {
             var _iteratorNormalCompletion3 = true;
             var _didIteratorError3 = false;
             var _iteratorError3 = undefined;
@@ -2483,7 +2486,9 @@ var SceneGraph = function () {
                 for (var _iterator3 = this.animatedSprites[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
                     var sprite = _step3.value;
 
-                    this.visibleSet.push(sprite);
+                    if (sprite.getType() == "DENKIMUSHI2") {
+                        return false;
+                    }
                 }
             } catch (err) {
                 _didIteratorError3 = true;
@@ -2496,6 +2501,39 @@ var SceneGraph = function () {
                 } finally {
                     if (_didIteratorError3) {
                         throw _iteratorError3;
+                    }
+                }
+            }
+
+            return true;
+        }
+    }, {
+        key: "scope",
+        value: function scope() {
+            // CLEAR OUT THE OLD
+            this.visibleSet = [];
+            // PUT ALL THE SCENE OBJECTS INTO THE VISIBLE SET
+            var _iteratorNormalCompletion4 = true;
+            var _didIteratorError4 = false;
+            var _iteratorError4 = undefined;
+
+            try {
+                for (var _iterator4 = this.animatedSprites[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                    var sprite = _step4.value;
+
+                    this.visibleSet.push(sprite);
+                }
+            } catch (err) {
+                _didIteratorError4 = true;
+                _iteratorError4 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                        _iterator4.return();
+                    }
+                } finally {
+                    if (_didIteratorError4) {
+                        throw _iteratorError4;
                     }
                 }
             }
@@ -2752,20 +2790,16 @@ var AnimatedSprite = function (_SceneObject_1$SceneO) {
                 this.movetime = 0;
                 this.direction = this.direction * -1;
             }
-            // Stay Still
-            if (this.direction == 0) {
-                this.setState("IDLE");
-            }
             // Move Right
-            else if (this.direction == 1 && this.getPosition().getX() + this.getSpriteType().getSpriteWidth() < 3200) {
+            if (this.direction == 1 && this.getPosition().getX() + this.getSpriteType().getSpriteWidth() < 3200) {
+                this.setState("WALKING");
+                this.getPosition().set(this.getPosition().getX() + SPEED, this.getPosition().getY(), 0, 1);
+            }
+            // Move Left
+            else if (this.direction == -1 && this.getPosition().getX() > 0) {
                     this.setState("WALKING");
-                    this.getPosition().set(this.getPosition().getX() + SPEED, this.getPosition().getY(), 0, 1);
+                    this.getPosition().set(this.getPosition().getX() - SPEED, this.getPosition().getY(), 0, 1);
                 }
-                // Move Left
-                else if (this.direction == -1 && this.getPosition().getX() > 0) {
-                        this.setState("WALKING");
-                        this.getPosition().set(this.getPosition().getX() - SPEED, this.getPosition().getY(), 0, 1);
-                    }
         }
     }, {
         key: "antAI",
