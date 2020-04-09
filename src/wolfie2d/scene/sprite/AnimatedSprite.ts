@@ -121,12 +121,8 @@ export class AnimatedSprite extends SceneObject {
             this.direction = this.direction * -1;
         }
 
-        // Stay Still
-        if(this.direction == 0) {
-            this.setState("IDLE");
-        }
         // Move Right
-        else if(this.direction == 1 && this.getPosition().getX() + this.getSpriteType().getSpriteWidth() < 3200) {
+        if(this.direction == 1 && this.getPosition().getX() + this.getSpriteType().getSpriteWidth() < 3200) {
             this.setState("WALKING");
             this.getPosition().set(this.getPosition().getX() + SPEED, this.getPosition().getY(), 0, 1);
         }
