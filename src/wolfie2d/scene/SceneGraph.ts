@@ -80,6 +80,14 @@ export class SceneGraph {
         this.animatedSprites.push(sprite);
     }
 
+    public removeAnimatedSprite(index : number) : void {
+        this.animatedSprites.splice(index, 1);
+    }
+
+    public getAnimatedSpites() : Array<AnimatedSprite> {
+        return this.animatedSprites;
+    }
+
     public getSpriteAt(testX : number, testY : number) : AnimatedSprite {
         for (let sprite of this.animatedSprites) {
             if (sprite.contains(testX, testY))
