@@ -12,12 +12,14 @@ import {TiledLayer} from './scene/tiles/TiledLayer'
 import {ResourceManager} from './files/ResourceManager'
 import {UIController} from './ui/UIController'
 import {Viewport} from './scene/Viewport'
+import {GamePhysics} from './physics/GamePhysics'
 
 export class Game extends GameLoopTemplate {
     private resourceManager : ResourceManager;
     private sceneGraph : SceneGraph;
     private renderingSystem : WebGLGameRenderingSystem;
     private uiController : UIController;
+    private gamePhysics : GamePhysics;
 
     public constructor(gameCanvasId : string, textCanvasId : string) {
         super();
@@ -25,6 +27,7 @@ export class Game extends GameLoopTemplate {
         this.sceneGraph= new SceneGraph();
         this.renderingSystem= new WebGLGameRenderingSystem(gameCanvasId, textCanvasId);
         this.uiController = new UIController(gameCanvasId, this.sceneGraph);
+        this.gamePhysics = new GamePhysics();
 
         // MAKE SURE THE SCENE GRAPH' S VIEWPORT IS PROPERLY SETUP
         let viewportWidth : number = (<HTMLCanvasElement>document.getElementById(gameCanvasId)).width;
@@ -72,6 +75,7 @@ export class Game extends GameLoopTemplate {
      */
     public update(delta : number) : void {
         this.sceneGraph.update(delta);
+        this.gamePhysics.update(this.sceneGraph);
     }
     
     /**
